@@ -156,7 +156,4 @@ unk = trig(desc, 0)
 sel = {es.similarity(unk): "es", en.similarity(unk): 'en', 
        de.similarity(unk): 'de'} 
 lang = sel[max(sel)]
-print sel
 print "phrase: %s \nlanguage: %s" % (desc, lang)
-
-print es.inventa_palabras(100)
