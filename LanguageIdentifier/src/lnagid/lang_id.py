@@ -30,9 +30,7 @@ class trig(object):
                 
         if '://' in fname:
             print "Recuperando archivo, puede tardar..."
-            arch = urllib2.Request(fname)
-            arch.add_header('User-agent', 'Mozilla/5.0')
-            arch = urllib2.urlopen(arch)
+            arch = self.open_as_mozilla(fname)
         else:
             arch = open(fname)
             
@@ -43,6 +41,12 @@ class trig(object):
         self.measure()
         
     
+    def open_as_mozilla(self,url):
+        arch = urllib2.Request(url)
+        arch.add_header('User-agent', 'Mozilla/5.0')
+        return urllib2.urlopen(url)
+    
+    
     def parse_cadena(self, cadena, par = '  '):
         self.parse_una_cadena(cadena, par)
         self.measure()    
@@ -51,10 +55,10 @@ class trig(object):
     def parse_una_cadena(self, cadena, par = '  '):
         
         for char in cadena.rstrip().strip():
-                d = self.tdb.setdefault(par, {})
-                d[char] = d.get(char, 0) + 1
+                vector = self.tdb.setdefault(par, {})
+                vector[char] = vector.get(char, 0) + 1
                 par = par[1] + char
-                
+
         
     def measure(self):
         total = 0
@@ -65,7 +69,7 @@ class trig(object):
         self.length = total ** 0.5
         
         
-    def similarity(self, otro):
+    def similaridad(self, otro):
         if not isinstance(otro, trig):
             raise TypeError("No es posible comparar un trig con un no trig")
         tdb1 = self.tdb
@@ -83,11 +87,7 @@ class trig(object):
                         
         return float(total) / (self.length * otro.length)
     
-    
-    def __sub__(self, otro):
-        return 1 - self.similarity(otro)
-    
-    
+       
     def inventa_palabras(self, cuenta):
         texto = []
         k = '  '
@@ -125,22 +125,38 @@ def corpus_compiler(lista):
 
 
 
-#esfiles = ['http://www.gutenberg.org/cache/epub/33885/pg33885.txt', 'http://www.gutenberg.org/cache/epub/26508/pg26508.txt', 'http://www.gutenberg.org/cache/epub/26231/pg26231.txt']
-#defiles = ['http://www.gutenberg.org/files/14225/14225-0.txt', 'http://www.gutenberg.org/files/16880/16880-0.txt', 'http://www.gutenberg.org/cache/epub/39669/pg39669.txt']
-#enfiles = ['http://www.gutenberg.org/dirs/etext05/cfgsh10.txt','http://www.gutenberg.org/cache/epub/76/pg76.txt', 'http://www.gutenberg.org/cache/epub/1661/pg1661.txt']
-
-        
+#esfiles = ['http://www.gutenberg.org/cache/epub/33885/pg33885.txt', 
+#           'http://www.gutenberg.org/cache/epub/26508/pg26508.txt', 
+#           'http://www.gutenberg.org/cache/epub/26231/pg26231.txt']
+#
+#
+#defiles = ['http://www.gutenberg.org/files/14225/14225-0.txt', 
+#           'http://www.gutenberg.org/files/16880/16880-0.txt',
+#           'http://www.gutenberg.org/cache/epub/39669/pg39669.txt']
+#
+#enfiles = ['http://www.gutenberg.org/dirs/etext05/cfgsh10.txt',
+#           'http://www.gutenberg.org/cache/epub/76/pg76.txt', 
+#           'http://www.gutenberg.org/cache/epub/1661/pg1661.txt']
+#
+#with open('falso_es', 'w') as f:
+#    f.write(corpus_compiler(esfiles))
+#    
+#with open('falso_en', 'w') as f:
+#    f.write(corpus_compiler(enfiles))
+#    
+#with open('falso_de', 'w') as f:
+#    f.write(corpus_compiler(defiles))
+    
 es = trig('falso_es')
 en = trig('falso_en')
 de = trig('falso_de')
-desc = "todo es aleman?"
+
+desc = 'hola'
 unk = trig(desc, 0)
-
-difes = unk - es
-difen = unk - en
-difde = unk - de
-
-sel = {difes:'es', difen:'en', difde:'de'}
-lang = sel[min(sel.keys())]
+sel = {es.similarity(unk): "es", en.similarity(unk): 'en', 
+       de.similarity(unk): 'de'} 
+lang = sel[max(sel)]
 print sel
 print "phrase: %s \nlanguage: %s" % (desc, lang)
+
+print es.inventa_palabras(100)
