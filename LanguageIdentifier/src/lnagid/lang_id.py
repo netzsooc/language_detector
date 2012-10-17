@@ -153,7 +153,7 @@ de = trig('falso_de')
 
 desc = 'hola'
 unk = trig(desc, 0)
-sel = {es.similarity(unk): "es", en.similarity(unk): 'en', 
-       de.similarity(unk): 'de'} 
+sel = {es.similaridad(unk): "es", en.similaridad(unk): 'en', 
+       de.similaridad(unk): 'de'} 
 lang = sel[max(sel)]
 print "phrase: %s \nlanguage: %s" % (desc, lang)
