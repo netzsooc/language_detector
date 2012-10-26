@@ -14,13 +14,13 @@ class trig(object):
     length = 0
 
 
-    def __init__(self, fname = None, flag = True):
+    def __init__(self, fname = None, t_file = True):
         '''
         Constructor
         '''
         self.tdb = {}
         if fname:
-            if flag:
+            if t_file:
                 self.parse_file(fname)
             else:
                 self.parse_cadena(fname)
