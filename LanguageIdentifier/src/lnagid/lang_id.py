@@ -5,7 +5,8 @@ Created on 16/10/2012
 @author: netzsooc
 '''
 from random import choice
-import urllib2
+from urls import open_as_mozilla
+
 
 class trig(object):
     '''
@@ -30,7 +31,7 @@ class trig(object):
                 
         if '://' in fname:
             print "Recuperando archivo, puede tardar..."
-            arch = self.open_as_mozilla(fname)
+            arch = open_as_mozilla(fname)
         else:
             arch = open(fname)
             
@@ -39,12 +40,6 @@ class trig(object):
 
         arch.close()
         self.measure()
-        
-    
-    def open_as_mozilla(self,url):
-        arch = urllib2.Request(url)
-        arch.add_header('User-agent', 'Mozilla/5.0')
-        return urllib2.urlopen(url)
     
     
     def parse_cadena(self, cadena, par = '  '):
@@ -111,18 +106,15 @@ class trig(object):
             
         letras = "".join(letras)
         return choice(letras)
-    
+
     
 def corpus_compiler(lista):
     out = ''
     for fn in lista:
         print "abriendo %s" % (fn[fn.rfind("/") + 1:])
-        arch = urllib2.Request(fn)
-        arch.add_header('User-agent', 'Mozilla/5.0')
-        arch = urllib2.urlopen(arch)
+        arch = open_as_mozilla(fn)
         out += arch.read()
     return out
-
 
 
 #esfiles = ['http://www.gutenberg.org/cache/epub/33885/pg33885.txt', 
@@ -137,23 +129,24 @@ def corpus_compiler(lista):
 #enfiles = ['http://www.gutenberg.org/dirs/etext05/cfgsh10.txt',
 #           'http://www.gutenberg.org/cache/epub/76/pg76.txt', 
 #           'http://www.gutenberg.org/cache/epub/1661/pg1661.txt']
-#
-#with open('falso_es', 'w') as f:
-#    f.write(corpus_compiler(esfiles))
-#    
-#with open('falso_en', 'w') as f:
-#    f.write(corpus_compiler(enfiles))
-#    
-#with open('falso_de', 'w') as f:
-#    f.write(corpus_compiler(defiles))
-    
-es = trig('falso_es')
-en = trig('falso_en')
-de = trig('falso_de')
 
-desc = 'hola'
-unk = trig(desc, 0)
-sel = {es.similaridad(unk): "es", en.similaridad(unk): 'en', 
-       de.similaridad(unk): 'de'} 
-lang = sel[max(sel)]
-print "phrase: %s \nlanguage: %s" % (desc, lang)
+
+def main():
+    es = trig('falso_es')
+    en = trig('falso_en')
+    de = trig('falso_de')
+    
+    desc = ' '
+    while desc:
+        desc = raw_input("write down your term please:\n")
+        unk = trig(desc, 0)
+        sel = {es.similaridad(unk): "es", en.similaridad(unk): 'en', 
+               de.similaridad(unk): 'de'} 
+        lang = sel[max(sel)]
+        print "phrase: %s \nlanguage: %s" % (desc, lang)
+        
+    print "Gracias."
+
+
+if __name__ == "__main__":
+    main()
